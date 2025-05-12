@@ -6,11 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-<<<<<<< HEAD
 import { CheckCircle, Clock, AlertCircle, Calendar, Plus, Search, Filter, ChevronDown, User } from 'lucide-react'
-=======
-import { CheckCircle, Clock, AlertCircle, Calendar, Plus, Search, Filter, ChevronDown, User } from "lucide-react"
->>>>>>> a71d26b7cd6ca4df9d5f8e3a012e25834d465c84
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function TasksPage() {
@@ -345,7 +341,7 @@ export default function TasksPage() {
             <CardContent>
               <div className="space-y-3">
                 {filterTasks([...tasks.upcoming, ...tasks.inProgress, ...tasks.completed]).length > 0 ? (
-                  filterTasks([...tasks.upcoming, ...tasks.inProgress, ...tasks.completed]).map((task) => (
+                  filterTasks([...tasks.upcoming, ...tasks.in_Progress, ...tasks.completed]).map((task) => (
                     <div
                       key={task.id}
                       className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
@@ -379,8 +375,4 @@ export default function TasksPage() {
       </Tabs>
     </div>
   )
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> a71d26b7cd6ca4df9d5f8e3a012e25834d465c84
