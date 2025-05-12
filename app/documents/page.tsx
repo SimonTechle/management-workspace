@@ -1,0 +1,611 @@
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  FileText,
+  Download,
+  Eye,
+  Calendar,
+  User,
+  Search,
+  Filter,
+  Plus,
+  Upload,
+  File,
+  FileSpreadsheet,
+  FileIcon as FilePresentationIcon,
+  FolderOpen,
+  MoreHorizontal,
+  ChevronDown,
+} from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+export default function DocumentsPage() {
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Sample data for documents
+  const documents = {
+    leases: [
+      {
+        id: 1,
+        name: "Riverside Apartments - Unit 101 Lease.pdf",
+        type: "pdf",
+        size: "2.4 MB",
+        lastModified: "May 10, 2023",
+        owner: "John Smith",
+      },
+      {
+        id: 2,
+        name: "Oakwood Heights - Unit 3B Lease.pdf",
+        type: "pdf",
+        size: "2.1 MB",
+        lastModified: "Apr 15, 2023",
+        owner: "Maria Garcia",
+      },
+      {
+        id: 3,
+        name: "Maple Business Center - Suite 205 Lease.pdf",
+        type: "pdf",
+        size: "3.2 MB",
+        lastModified: "Mar 22, 2023",
+        owner: "Robert Johnson",
+      },
+    ],
+    contracts: [
+      {
+        id: 4,
+        name: "Maintenance Service Agreement.pdf",
+        type: "pdf",
+        size: "1.8 MB",
+        lastModified: "May 5, 2023",
+        owner: "Admin",
+      },
+      {
+        id: 5,
+        name: "Cleaning Service Contract.pdf",
+        type: "pdf",
+        size: "1.2 MB",
+        lastModified: "Apr 28, 2023",
+        owner: "Admin",
+      },
+    ],
+    reports: [
+      {
+        id: 6,
+        name: "Q1 Financial Report.xlsx",
+        type: "xlsx",
+        size: "4.5 MB",
+        lastModified: "Apr 10, 2023",
+        owner: "Admin",
+      },
+      {
+        id: 7,
+        name: "Annual Property Inspection Report.pdf",
+        type: "pdf",
+        size: "8.2 MB",
+        lastModified: "Mar 15, 2023",
+        owner: "Admin",
+      },
+      {
+        id: 8,
+        name: "Maintenance Cost Analysis.xlsx",
+        type: "xlsx",
+        size: "3.7 MB",
+        lastModified: "Feb 28, 2023",
+        owner: "Admin",
+      },
+    ],
+    other: [
+      {
+        id: 9,
+        name: "Property Insurance Policy.pdf",
+        type: "pdf",
+        size: "5.1 MB",
+        lastModified: "Jan 15, 2023",
+        owner: "Admin",
+      },
+      {
+        id: 10,
+        name: "Tenant Handbook.pdf",
+        type: "pdf",
+        size: "3.4 MB",
+        lastModified: "Dec 10, 2022",
+        owner: "Admin",
+      },
+      {
+        id: 11,
+        name: "Property Marketing Presentation.pptx",
+        type: "pptx",
+        size: "12.8 MB",
+        lastModified: "Nov 5, 2022",
+        owner: "Admin",
+      },
+    ],
+  }
+
+  const getDocumentIcon = (type: string) => {
+    switch (type) {
+      case "pdf":
+        return <FileText className="h-10 w-10 text-red-500" />
+      case "xlsx":
+      case "xls":
+        return <FileSpreadsheet className="h-10 w-10 text-green-500" />
+      case "docx":
+      case "doc":
+        return <File className="h-10 w-10 text-blue-500" />
+      case "pptx":
+      case "ppt":
+        return <FilePresentationIcon className="h-10 w-10 text-orange-500" />
+      case "folder":
+        return <FolderOpen className="h-10 w-10 text-amber-500" />
+      default:
+        return <File className="h-10 w-10 text-gray-500" />
+    }
+  }
+
+  // Filter documents based on search query
+  const filterDocuments = (docList: any[]) => {
+    if (!searchQuery) return docList
+    return docList.filter(
+      (doc) =>
+        doc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.owner.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
+  }
+
+  return (
+    <div className="space-y-6 p-4 lg:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Document Management</h1>
+          <p className="text-gray-500 mt-1">Manage and organize all your property documents</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="h-9">
+            <Upload className="mr-2 h-4 w-4" />
+            Upload
+          </Button>
+          <Button size="sm" className="h-9">
+            <Plus className="mr-2 h-4 w-4" />
+            New Folder
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Input
+            type="search"
+            placeholder="Search documents..."
+            className="pl-10 h-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-10 sm:w-[180px]">
+              <Filter className="mr-2 h-4 w-4" />
+              Filter by type
+              <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[180px]">
+            <DropdownMenuItem>All Documents</DropdownMenuItem>
+            <DropdownMenuItem>PDF Files</DropdownMenuItem>
+            <DropdownMenuItem>Word Documents</DropdownMenuItem>
+            <DropdownMenuItem>Excel Spreadsheets</DropdownMenuItem>
+            <DropdownMenuItem>Presentations</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <Tabs defaultValue="all" className="space-y-4">
+        <TabsList className="bg-gray-100/80 p-1">
+          <TabsTrigger value="all" className="data-[state=active]:bg-white">
+            All Documents
+          </TabsTrigger>
+          <TabsTrigger value="leases" className="data-[state=active]:bg-white">
+            Leases
+          </TabsTrigger>
+          <TabsTrigger value="contracts" className="data-[state=active]:bg-white">
+            Contracts
+          </TabsTrigger>
+          <TabsTrigger value="reports" className="data-[state=active]:bg-white">
+            Reports
+          </TabsTrigger>
+          <TabsTrigger value="other" className="data-[state=active]:bg-white">
+            Other
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="space-y-4">
+          <Card className="shadow-none border-gray-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-gray-900">All Documents</CardTitle>
+              <CardDescription>View and manage all documents</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {filterDocuments([
+                  ...documents.leases,
+                  ...documents.contracts,
+                  ...documents.reports,
+                  ...documents.other,
+                ]).length > 0 ? (
+                  filterDocuments([
+                    ...documents.leases,
+                    ...documents.contracts,
+                    ...documents.reports,
+                    ...documents.other,
+                  ]).map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="mr-4 flex-shrink-0">{getDocumentIcon(doc.type)}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate">{doc.name}</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.lastModified}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <User className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.owner}</span>
+                          </div>
+                          <span>{doc.size}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 ml-4">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[160px]">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <User className="mr-2 h-4 w-4" />
+                              Share
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No documents found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="leases" className="space-y-4">
+          <Card className="shadow-none border-gray-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-gray-900">Leases</CardTitle>
+              <CardDescription>Lease agreements for properties and units</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {filterDocuments(documents.leases).length > 0 ? (
+                  filterDocuments(documents.leases).map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="mr-4 flex-shrink-0">{getDocumentIcon(doc.type)}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate">{doc.name}</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.lastModified}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <User className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.owner}</span>
+                          </div>
+                          <span>{doc.size}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 ml-4">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[160px]">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <User className="mr-2 h-4 w-4" />
+                              Share
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No documents found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Similar structure for other tabs */}
+        <TabsContent value="contracts" className="space-y-4">
+          <Card className="shadow-none border-gray-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-gray-900">Contracts</CardTitle>
+              <CardDescription>Service and vendor contracts</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {filterDocuments(documents.contracts).length > 0 ? (
+                  filterDocuments(documents.contracts).map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="mr-4 flex-shrink-0">{getDocumentIcon(doc.type)}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate">{doc.name}</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.lastModified}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <User className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.owner}</span>
+                          </div>
+                          <span>{doc.size}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 ml-4">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[160px]">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <User className="mr-2 h-4 w-4" />
+                              Share
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No documents found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="reports" className="space-y-4">
+          <Card className="shadow-none border-gray-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-gray-900">Reports</CardTitle>
+              <CardDescription>Financial and property reports</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {filterDocuments(documents.reports).length > 0 ? (
+                  filterDocuments(documents.reports).map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="mr-4 flex-shrink-0">{getDocumentIcon(doc.type)}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate">{doc.name}</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.lastModified}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <User className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.owner}</span>
+                          </div>
+                          <span>{doc.size}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 ml-4">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[160px]">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <User className="mr-2 h-4 w-4" />
+                              Share
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No documents found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="other" className="space-y-4">
+          <Card className="shadow-none border-gray-200">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-gray-900">Other Documents</CardTitle>
+              <CardDescription>Miscellaneous documents</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {filterDocuments(documents.other).length > 0 ? (
+                  filterDocuments(documents.other).map((doc) => (
+                    <div
+                      key={doc.id}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="mr-4 flex-shrink-0">{getDocumentIcon(doc.type)}</div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-gray-900 truncate">{doc.name}</h3>
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+                          <div className="flex items-center">
+                            <Calendar className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.lastModified}</span>
+                          </div>
+                          <div className="flex items-center">
+                            <User className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                            <span>{doc.owner}</span>
+                          </div>
+                          <span>{doc.size}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 ml-4">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-gray-700">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[160px]">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <User className="mr-2 h-4 w-4" />
+                              Share
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No documents found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}

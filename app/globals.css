@@ -113,4 +113,8 @@ body {
   .status-badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a71d26b7cd6ca4df9d5f8e3a012e25834d465c84

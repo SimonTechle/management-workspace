@@ -6,7 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
+<<<<<<< HEAD
 import { CheckCircle, Clock, AlertCircle, Calendar, Plus, Search, Filter, ChevronDown, User } from 'lucide-react'
+=======
+import { CheckCircle, Clock, AlertCircle, Calendar, Plus, Search, Filter, ChevronDown, User } from "lucide-react"
+>>>>>>> a71d26b7cd6ca4df9d5f8e3a012e25834d465c84
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function TasksPage() {
@@ -375,4 +379,8 @@ export default function TasksPage() {
       </Tabs>
     </div>
   )
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a71d26b7cd6ca4df9d5f8e3a012e25834d465c84
