@@ -341,7 +341,7 @@ export default function TasksPage() {
             <CardContent>
               <div className="space-y-3">
                 {filterTasks([...tasks.upcoming, ...tasks.inProgress, ...tasks.completed]).length > 0 ? (
-                  filterTasks([...tasks.upcoming, ...tasks.in_Progress, ...tasks.completed]).map((task) => (
+                  filterTasks([...tasks.upcoming, ...tasks.inProgress, ...tasks.completed]).map((task) => (
                     <div
                       key={task.id}
                       className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
